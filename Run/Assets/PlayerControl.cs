@@ -10,12 +10,21 @@ public class PlayerControl : MonoBehaviour
     public KeyCode moveRight = KeyCode.D;
     public float speed = 10.0f;
     private Rigidbody2D rb;
+    bool alive = true;
 
     void OnCollisionEnter2D(Collision2D col){
         if(col.collider.CompareTag("Enemy")){
+            alive = false;
             GetComponent<AudioSource>().Play();
-            Application.Quit();
+            rb.velocity = Vector2.zero;
+            Reset();
         }
+    }
+
+    void Reset(){
+        alive = true;
+        rb.velocity = Vector2.zero;
+        transform.position = new Vector3(0f, -3.5f, -1f);
     }
 
     // Start is called before the first frame update
@@ -27,23 +36,25 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var vel = rb.velocity;
-        if(Input.GetKey(moveUp)){
-            vel.y = speed;
+        if(alive == true){
+            var vel = rb.velocity;
+            if(Input.GetKey(moveUp)){
+                vel.y = speed;
+            }
+            else if(Input.GetKey(moveDown)){
+                vel.y = -speed;
+            }
+            else if(Input.GetKey(moveLeft)){
+                vel.x = -speed;
+            }
+            else if(Input.GetKey(moveRight)){
+                vel.x = speed;
+            }
+            else{
+                vel.x=0;
+                vel.y=0;
+            }
+            rb.velocity = vel;
         }
-        else if(Input.GetKey(moveDown)){
-            vel.y = -speed;
-        }
-        else if(Input.GetKey(moveLeft)){
-            vel.x = -speed;
-        }
-        else if(Input.GetKey(moveRight)){
-            vel.x = speed;
-        }
-        else{
-            vel.x=0;
-            vel.y=0;
-        }
-        rb.velocity = vel;
     }
 }
